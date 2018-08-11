@@ -1,6 +1,8 @@
 import React from "react";
 import Joke from "./Joke";
 import axios from "axios";
+import { Route, Link } from "react-router-dom";
+import PunchLine from "./PunchLine";
 
 class Jokes extends React.Component {
   constructor() {
@@ -20,6 +22,7 @@ class Jokes extends React.Component {
       axios
         .get("http://localhost:5000/api/jokes", authHeader)
         .then(response => {
+          localStorage.setItem("joke", JSON.stringify(response.data));
           this.setState({ jokes: response.data });
         })
         .catch(err => {
@@ -38,15 +41,30 @@ class Jokes extends React.Component {
     return (
       <div>
         <button onClick={this.Logout}>Log Out</button>
+
         {localStorage.getItem("jwt") ? (
-          <div>
-            {this.state.jokes.map(joke => {
-              return <Joke key={Math.random()} joke={joke} />;
-            })}
-          </div>
+          <Route
+            exact
+            path="/jokes"
+            render={() => (
+              <div>
+                {this.state.jokes.map(joke => {
+                  return (
+                    <Link to={`/jokes/${joke.id}`}>
+                      <div>
+                        <Joke key={joke.id} joke={joke} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          />
         ) : (
           <p>You're not logged in, redirecting...</p>
         )}
+        {/*<Route exact path="/jokes/:id" render={props => <Joke key={Math.random()} {...props} />} />*/}
+        <Route exact path="/jokes/:id" render={props => <PunchLine {...props} />} />
       </div>
     );
   }
