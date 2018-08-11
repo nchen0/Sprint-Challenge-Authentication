@@ -4,7 +4,6 @@ const PunchLine = props => {
   let id = props.match.params.id;
   let items = JSON.parse(localStorage.getItem("joke"));
   let joke = items.filter(item => {
-    console.log("item.id is: ", item.id);
     return item.id == id;
   });
   return (
